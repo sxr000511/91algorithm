@@ -47,15 +47,21 @@ https://leetcode-cn.com/problems/sum-root-to-leaf-numbers/
 树的深度不超过 10
 ```
 
-## 前置知识
 
-- 
-
-## 公司
-
-- 暂无
 
 ## 思路
+
+不管哪种方法，更新sum的条件都是node没有左右子节点
+
+### 1. DFS
+
+递归
+
+时间on 空间 oh（树的高度）
+
+### 2. BFS
+
+循环遍历每一层
 
 ## 关键点
 
@@ -81,21 +87,62 @@ JavaScript Code:
  * @param {TreeNode} root
  * @return {number}
  */
+
+//  DFS
+// function sumNumbers(root) {
+//   let sum = 0;
+//   function dfs(root, cur) {
+//     if (!root) {
+//       return;
+//     }
+//     let curSum = cur * 10 + root.val;
+
+//     // 如果没有左右子节点，代表这条route已经走完了，该用return直接返回值了
+//     // sum 用来存储结果
+//     // cursum用来传递（cur是其别名），递归计算
+//     if (!root.left && !root.right) {
+//       sum += curSum;
+//       return;
+//     }
+//     dfs(root.left, curSum);
+//     dfs(root.right, curSum);
+//   }
+//   dfs(root, 0);
+//   return sum;
+// }
+
+
+// BFS
+
 function sumNumbers(root) {
   let sum = 0;
-  function dfs(root, cur) {
-    if (!root) {
-      return;
-    }
-    let curSum = cur * 10 + root.val;
-    if (!root.left && !root.right) {
-      sum += curSum;
-      return;
-    }
-    dfs(root.left, curSum);
-    dfs(root.right, curSum);
+  let curLevel = [];
+  if (root) {
+    curLevel.push(root);
   }
-  dfs(root, 0);
+//   curLevel 在内部修改后在外部持续进入循环
+  while (curLevel.length) {
+    let nextLevel = [];
+    // 用curlevel.length 更新本层数据
+    // for 循环遍历每一个数据
+    for (let i = 0; i < curLevel.length; i++) {
+      let cur = curLevel[i];
+      if (cur.left) {
+        cur.left.val = cur.val * 10 + cur.left.val;
+        // 下一层数据
+        nextLevel.push(cur.left);
+      }
+      if (cur.right) {
+        cur.right.val = cur.val * 10 + cur.right.val;
+        nextLevel.push(cur.right);
+      }
+      if (!cur.left && !cur.right) {
+        sum += cur.val;
+      }
+    //   把下一层数据赋值进来
+      curLevel = nextLevel;
+    }
+  }
   return sum;
 }
 
